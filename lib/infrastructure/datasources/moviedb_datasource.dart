@@ -18,7 +18,11 @@ class MovieDbDatasource extends MoviesDataSource {
   Future<List<Movie>> getNowPlaying({int page = 1}) async {
     
     //! RECORDAR QUE PARA HACER UNA PETICION HTTP SE USA UNA FUNCION ASYNC.
-    final response = await dio.get('/movie/now_playing'); //? con dio.get hago la petición get.
+    final response = await dio.get('/movie/now_playing',
+      queryParameters: {
+        'page': page
+      }
+    ); //? con dio.get hago la petición get.
     final movieDBResponse = MovieDbResponse.fromJson(response.data);
 
     final List<Movie> movies = movieDBResponse.results
