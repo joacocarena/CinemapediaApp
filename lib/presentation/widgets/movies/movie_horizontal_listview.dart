@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MovieHorizontalListview extends StatefulWidget {
   
@@ -33,10 +34,9 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
     scrollController.addListener(() {
       if (widget.loadNextPage == null) return;
 
-      if ((scrollController.position.pixels + 200) >= scrollController.position.maxScrollExtent)
-        
-
+      if ((scrollController.position.pixels + 200) >= scrollController.position.maxScrollExtent) {
         widget.loadNextPage!();
+      }
     });
   }
 
@@ -63,7 +63,7 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
-                return _Slide(movie: widget.movies[index]);
+                return FadeInRight(child: _Slide(movie: widget.movies[index]));
               },
             )
           )
@@ -105,8 +105,9 @@ class _Slide extends StatelessWidget {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     );
                   }
-                  return FadeIn(
-                    child: child
+                  return GestureDetector(
+                    onTap: () => context.push('/movie/${ movie.id }'),
+                    child: FadeIn( child: child ),
                   );
                 },
               ),
@@ -130,7 +131,7 @@ class _Slide extends StatelessWidget {
                 const SizedBox(width: 3),
                 Text('${movie.voteAverage}', style: textStyles.bodyMedium?.copyWith(color: Colors.yellow.shade800)),
                 const Spacer(),
-                Text(HumanFormats.number(movie.popularity), style: textStyles.bodySmall),
+                Text(HumanFormats.number(movie.popularity, 1), style: textStyles.bodySmall),
               ],
             ),
           ),
@@ -150,25 +151,21 @@ class _Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
-    final titleStyle = Theme.of(context).textTheme.titleLarge;
+    final titleStyle = Theme.of(context).textTheme;
 
     return Container(
-      padding: const EdgeInsets.only(top: 15),
+      padding: const EdgeInsets.only(top: 15, bottom: 10),
       margin: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         children: [
           
           if (title != null)
-            Text(title!, style: titleStyle),
+            Text(title!, style: titleStyle.titleLarge),
           
           const Spacer(),
 
           if (subTitle != null)
-            FilledButton.tonal(
-              style: const ButtonStyle(visualDensity: VisualDensity.compact),
-              onPressed: (){}, 
-              child: Text(subTitle!), 
-            )
+            Text(subTitle!, style: titleStyle.bodyLarge,)
 
         ],
       ),
